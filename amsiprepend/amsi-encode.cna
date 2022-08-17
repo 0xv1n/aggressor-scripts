@@ -12,20 +12,30 @@ sub callback {
     $ps_pmt = "powershell -w hidden -enc ";
     $concat = "$prepend_bypass $+ $command";
     $encoded = base64_encode($concat);
-    # Outputs command to Script Console
-    show_message("$ps_pmt $+ $encoded");
+    $full_cmd = "$ps_pmt $+ $encoded";
+    
+    ## Debugging leftover
+    #println("$full_cmd");
+    %returnval['encoded'] = $full_cmd;
+    $confirmation = dialog("Encoded Command", %(encoded_cmd => %returnval['encoded']), &nop);
+    drow_text($confirmation, "encoded_cmd");
+    dbutton_action($confirmation, "OK");
+    dialog_show($confirmation);
+}
+
+sub nop {
+
 }
 
 sub abyp-encode {
-    $dialog = dialog("ASMI Stuff", %(method => %defaultsetting['method']), &callback);
+    $dialog = dialog("Prepend AMSI Bypass", %(method => %defaultsetting['method']), &callback);
     dialog_description($dialog, "Prepend AMSI Bypass to a command then Encode");
-    
     drow_text($dialog, "command", "PS Command:");
     drow_text($dialog, "method",  "Prepend Bypass:");
-    
     dbutton_action($dialog, "Encode");
 
     dialog_show($dialog);
+
 }
 
 # Menu Entry
